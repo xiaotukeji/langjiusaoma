@@ -1,0 +1,57 @@
+{extend name="admin@index_layout"/}
+{block name="main"}
+<div class="layui-card">
+    <div class="layui-card-header">会员积分记录</div>
+    <div class="layui-card-body">
+        <div class="layui-tab-item layui-show">
+            <table class="layui-hide" id="currentTable" lay-filter="currentTable" 
+                data-auth-add="{:$auth->check('member.pointlog/add')}"
+                data-auth-delete="{:$auth->check('member.pointlog/del')}"
+            ></table>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script>
+layui.use('yznTable', function() {
+    var table = layui.yznTable;
+
+    var init = {
+        table_elem: '#currentTable',
+        table_render_id: 'currentTable',
+        add_url: "{:url('add')}",
+        delete_url: "{:url('del')}",
+    };
+
+    table.render({
+        init: init,
+        toolbar: ['refresh','add'],
+        url: '{:url("index")}',
+        cols: [
+            [
+                { field: 'id', width: 80, title: 'ID' },
+                { field: 'user_id', width: 80, title: '用户id' },
+                { field: 'member.username', minWidth: 120, title: '用户名' },
+                { field: 'member.nickname', minWidth: 120, title: '用户昵称' },
+                { field: 'point', title: '变更积分', templet: function(d){
+                        if(d.point > 0){
+                            return '<span class="layui-font-green">+' + d.point + '</span>';
+                        } else {
+                            return '<span class="layui-font-red">' + d.point + '</span>';
+                        }
+                    }
+                },
+                { field: 'before', title: '变更前' },
+                { field: 'after', title: '变更后' },
+                { field: 'remark', title: '备注' },
+                { field: 'create_time', width: 180, title: '创建时间' },
+            ]
+        ],
+        page: {}
+    });
+
+    yznTable.bindevent();
+});
+</script>
+{/block}

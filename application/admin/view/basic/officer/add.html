@@ -1,0 +1,51 @@
+{extend name="index_layout"/}
+{block name="main"}
+<form class="layui-form" method="post">
+    {:token()}
+    <div class="layui-form-item">
+        <label class="layui-form-label">工号</label>
+        <div class="layui-input-block">
+            <input type="text" name="gonghao" lay-verify="required" autocomplete="off" placeholder="工号" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-block">
+            <input  name="realname" lay-verify="required" autocomplete="off" placeholder="姓名" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">手机</label>
+        <div class="layui-input-block">
+            <input  name="mobile" lay-verify="required" autocomplete="off" placeholder="手机" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">微信号</label>
+        <div class="layui-input-block">
+            <input type="text" name="wechat" lay-verify="required" autocomplete="off" placeholder="微信号" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">帮扶企业</label>
+        <div class="layui-input-block">
+            <input type="text" name="company_str" autocomplete="off" placeholder="帮扶企业" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layer-footer">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+layui.use('yznForm', function() {
+    var yznForm = layui.yznForm;
+    yznForm.bindevent($("form.layui-form"));
+});
+</script>
+{/block}

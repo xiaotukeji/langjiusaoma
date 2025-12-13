@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>产品详情</title>
+    <link rel="stylesheet" href="__STATIC__/libs/layui/css/layui.css">
+    <script>
+        // 页面加载时立即检查并修复 URL，避免浏览器历史记录规范化大小写
+        (function() {
+            var url = window.location.href;
+            var urlObj = new URL(url);
+            var nocache = urlObj.searchParams.get('nocache');
+            
+            // 如果 URL 中没有 nocache 参数，立即添加（使用 replaceState 不添加历史记录）
+            if (!nocache) {
+                // 获取原始的 key 参数值（从 URL 中直接解析，保持大小写）
+                var key = urlObj.searchParams.get('key');
+                if (key) {
+                    // 生成唯一的 nocache 值：时间戳+随机数
+                    var nocacheVal = Date.now() + Math.floor(Math.random() * 10000);
+                    // 使用 replaceState 替换 URL，不添加历史记录（类似无痕浏览）
+                    urlObj.searchParams.set('nocache', nocacheVal);
+                    window.history.replaceState(null, '', urlObj.toString());
+                }
+            }
+        })();
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            font-family: "Microsoft YaHei", sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
+        }
+        .product-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 10px;
+            margin-bottom: 15px;
+        }
+        .product-header {
+            background: linear-gradient(to right, #8c7853, #d2b48c);
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .product-info {
+            padding: 15px;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .info-value {
+            text-align: right;
+            color: #333;
+        }
+        .product-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+        }
+        .product-footer {
+            /*background-color: #f9f9f9;*/
+            padding: 10px;
+            padding-bottom: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #fff;
+            margin: 0 10px;
+        }
+        .no-product {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+        }
+        /* 物流码样式 */
+        .logistics-code-tip {
+            background-color: #000;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logistics-code-tip i {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #f90;
+            color: #fff;
+            text-align: center;
+            line-height: 18px;
+            margin-right: 8px;
+            font-style: normal;
+        }
+        .logistics-code-title-wrapper {
+            position: relative;
+            text-align: center;
+            margin-top: -22px;
+            margin-bottom: 15px;
+            z-index: 5;
+        }
+        .logistics-code-title {
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(to bottom, #e3b077, #c6904b);
+            color: #6a3906;
+            border-radius: 20px;
+            padding: 6px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .logistics-code-container {
+            position: relative;
+            background: linear-gradient(to bottom, #f3e5d4, #e9d1b5);
+            padding: 25px 15px 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 0 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .logistics-code {
+            color: #533016;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            line-height: 1.4;
+            padding: 0 10px;
+        }
+        .logistics-code-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        .logistics-code-group {
+            margin: 0 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    {empty name="product"}
+    <div class="no-product">
+        <!--                <h3>产品不存在或已被删除</h3>
+                        <p>请检查产品ID是否正确</p>-->
+    </div>
+    {else/}
+    <!-- 产品封面图片 - 放在最顶部 -->
+    {notempty name="product.cover"}
+    <div style="width:100%;">
+        <img src="{$product.cover}" style="width:100%; display:block;" alt="{$product.name}">
+    </div>
+    {/notempty}
+
+    <!-- 物流码部分 -->
+    {if condition="$show_wuliu"}
+    <div class="logistics-code-tip">
+        <i>i</i> 物流码位于盒身右侧上方，请注意核对
+    </div>
+    <div class="logistics-code-container">
+        <div class="logistics-code-title-wrapper">
+            <div class="logistics-code-title">请核对物流码</div>
+        </div>
+        <div class="logistics-code">
+            {php}
+            // 处理物流码格式
+            $wuliuma = isset($product['wuliuma']) ? $product['wuliuma'] : '';
+            $wuliuma2 = isset($product['wuliuma2']) ? $product['wuliuma2'] : '';
+
+            // 移除所有空格
+            $wuliuma = str_replace(' ', '', $wuliuma);
+            $wuliuma2 = str_replace(' ', '', $wuliuma2);
+
+            // 连接两个物流码
+            $combined_code = $wuliuma . $wuliuma2;
+            
+            // 计算需要多少行显示（每行12个字符）
+            $total_length = strlen($combined_code);
+            $rows = ceil($total_length / 12);
+            
+            // 遍历每一行
+            for ($row = 0; $row < $rows; $row++) {
+                // 获取当前行的12个字符
+                $line = substr($combined_code, $row * 12, 12);
+                
+                // 如果是最后一行且不足12个字符，补足0
+                if (strlen($line) < 12) {
+                    $line = str_pad($line, 12, '0');
+                }
+                
+                // 开始新的一行
+                echo '<div class="logistics-code-row">';
+                
+                // 每4个字符分成一组
+                for ($i = 0; $i < 3; $i++) {
+                    $group = substr($line, $i * 4, 4);
+                    echo '<span class="logistics-code-group">' . $group . '</span>';
+                }
+                
+                echo '</div>';
+            }
+            {/php}
+        </div>
+    </div>
+    <!-- 请综合该产品其他防伪手段确认真假 -->
+    <div style="text-align: center; font-size: 12px; color: #999; margin: 10px 0 20px;">
+        - 请综合该产品其他防伪手段确认真假 -
+    </div>
+
+    {/if}
+
+
+
+    <div class="product-card">
+        <div class="product-header">
+            产品信息查询
+        </div>
+
+        <div class="product-info">
+            <div class="info-item">
+                <span class="info-label">产品名称</span>
+                <span class="info-value">{$product.name|default='--'}</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">酒精度</span>
+                <span class="info-value">{$product.jiujingdu|default='--'} %vol</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">生产批号</span>
+                <span class="info-value">{$product.shengchanpihao|default='--'}</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">容量</span>
+                <span class="info-value">{$product.rongliang|default='--'} mL</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">生产日期</span>
+                <span class="info-value">{$product.produce_time|default='--'}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-card">
+        <div class="product-header">
+            查询记录
+        </div>
+        <div class="product-info">
+            <div class="info-item">
+                <span class="info-label">查询次数</span>
+                <span class="info-value">{$query_count|default='1'}次</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">首次查询时间</span>
+                <span class="info-value">{$first_query_time|default=''}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">本次查询时间</span>
+                <span class="info-value">{$last_query_time|default=''}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">上次查询地址</span>
+                <span class="info-value">{$location_info|default=''}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-footer">
+        - 弘扬历史传承 · 共酿和美生活 -
+    </div>
+    {/empty}
+</div>
+</body>
+</html>

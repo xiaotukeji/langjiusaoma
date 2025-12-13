@@ -1,0 +1,49 @@
+{template file="member/header.html"/}
+<div class="layui-card pd-20 no-shadow">
+    <div class="layui-card-header fly-title">
+        <h2>Balance Log</h2>
+    </div>
+    <div class="layui-card-body">
+        <table class="layui-hide" id="currentTable" lay-filter="currentTable"></table>
+    </div>
+</div>
+{template file="member/layui.html"/}
+<script>
+layui.use(['yznTable','form'], function() {
+    var yznTable = layui.yznTable,
+        $ = layui.$,
+        form = layui.form;
+
+    var init = {
+        table_elem: '#currentTable',
+        table_render_id: 'currentTable',
+    };
+
+    yznTable.render({
+        init: init,
+        toolbar: ['refresh'],
+        url: '{:url("amountlog")}',
+        search:false,
+        cols: [
+            [
+                { field: 'amount', width: 140, title: 'Money Amount' , templet: function(d){
+                        if(d.amount > 0){
+                            return '<span class="layui-font-green">+' + d.amount + '</span>';
+                        } else {
+                            return '<span class="layui-font-red">' + d.amount + '</span>';
+                        }
+                    }
+                },
+                { field: 'before', width: 140, title: 'Balance Before'},
+                { field: 'after', width: 180, title: 'Balance After' },
+                { field: 'remark',title: 'Remark' },
+                { field: 'create_time', width: 180, title: 'CreateTime',search: 'range'},
+            ]
+        ],
+        page: {}
+    });
+
+    yznTable.bindevent();
+});
+</script>
+{template file="member/footer.html"/}

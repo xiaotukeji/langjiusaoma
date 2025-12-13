@@ -1,0 +1,61 @@
+{extend name="index_layout"/}
+{block name="main"}
+<form class="layui-form" method="post">
+    {:token()}
+    <div class="layui-form-item">
+        <label class="layui-form-label">企业名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" lay-verify="required" autocomplete="off" placeholder="企业名称" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">电话</label>
+        <div class="layui-input-block">
+            <input  name="mobile" lay-verify="required" autocomplete="off" placeholder="电话" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">E-mail</label>
+        <div class="layui-input-block">
+            <input type="text" name="email" lay-verify="required|email" autocomplete="off" placeholder="E-mail" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="address" autocomplete="off" placeholder="地址" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label" >企业地图</label>
+        <div class="layui-input-block">
+            <div class="layui-col-xs4" style="width:420px;">
+                <input type="text" name="map_url"  id="c-company" value="" class="layui-input">
+            </div>
+            <button type="button" class="layui-btn faupload" id="faupload-company" data-multiple="false" data-input-id="c-company" data-preview-id="p-company" data-type="image">
+                <i class="layui-icon layui-icon-upload"></i> 上传</button>
+<!--            <button type="button" class="layui-btn fachoose" data-multiple="false" data-mimetype="image" data-input-id="c-company" id="fachoose-c-company">
+                <i class="iconfont icon-other"></i> 选择</button>-->
+            <ul class="layui-row list-inline plupload-preview" id="p-company"></ul>
+        </div>
+
+    </div>
+    <div class="layui-form-item layer-footer">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+layui.use('yznForm', function() {
+    var yznForm = layui.yznForm;
+    yznForm.bindevent($("form.layui-form"));
+});
+</script>
+{/block}

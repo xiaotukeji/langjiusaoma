@@ -1,0 +1,82 @@
+{extend name="index_layout"/}
+{block name="main"}
+<form class="layui-form" method="post">
+    {:token()}
+    <div class="layui-form-item">
+        <label class="layui-form-label">产品名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" autocomplete="off" placeholder="请输入产品名称" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">生产批号</label>
+        <div class="layui-input-block">
+            <input type="text" name="shengchanpihao" autocomplete="off" placeholder="请输入生产批号" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">生产日期</label>
+        <div class="layui-input-block">
+            <input type="text" name="produce_time" id="produce_time" autocomplete="off" placeholder="请选择生产日期" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">酒精度</label>
+        <div class="layui-input-block">
+            <input type="text" name="jiujingdu" autocomplete="off" placeholder="请输入酒精度" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">容量</label>
+        <div class="layui-input-block">
+            <input type="text" name="rongliang" autocomplete="off" placeholder="请输入容量" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">物流码</label>
+        <div class="layui-input-block">
+            <input type="text" name="wuliuma" autocomplete="off" placeholder="请输入物流码" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="status" lay-skin="switch" lay-text="开启|禁用" value="1" checked>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">封面图</label>
+        <div class="layui-input-block">
+            <div class="layui-col-xs4" style="width:420px;">
+                <input type="text" name="cover" id="c-cover" value="" class="layui-input">
+            </div>
+            <button type="button" class="layui-btn faupload" id="faupload-cover" data-multiple="false" data-input-id="c-cover" data-preview-id="p-cover" data-type="image">
+                <i class="layui-icon layui-icon-upload"></i> 上传图片</button>
+            <ul class="layui-row list-inline plupload-preview" id="p-cover"></ul>
+        </div>
+    </div>
+
+    <div class="layui-form-item layer-footer">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+layui.use(['yznForm', 'laydate'], function() {
+    var yznForm = layui.yznForm,
+        laydate = layui.laydate;
+    
+    // 日期选择器
+    laydate.render({
+        elem: '#produce_time',
+        format: 'yyyy-MM-dd'
+    });
+    
+    yznForm.bindevent($("form.layui-form"));
+});
+</script>
+{/block}

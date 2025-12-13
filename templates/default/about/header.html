@@ -1,0 +1,63 @@
+<link href="/static/asf/css/css2.css" rel="stylesheet">
+<link href="/static/asf/css/css21.css" rel="stylesheet">
+<!--== Bootstrap CSS ==-->
+<link href="/static/asf/css/bootstrap.min.css" rel="stylesheet">
+<!--== Icofont Icon CSS ==-->
+<link href="/static/asf/css/icofont.css" rel="stylesheet">
+<!--== Swiper CSS ==-->
+<link href="/static/asf/css/swiper.min.css" rel="stylesheet">
+<!--== Fancybox Min CSS ==-->
+<link href="/static/asf/css/fancybox.min.css" rel="stylesheet">
+<!--== Aos Min CSS ==-->
+<link href="/static/asf/css/aos.min.css" rel="stylesheet">
+<!--== Main Style CSS ==-->
+<link href="/static/asf/css/style.css?<?=time()?>" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="__STATIC__/libs/layui/css/layui.css" />
+<header class="header-area transparent">
+    <div class="container">
+        <div class="row no-gutter align-items-center position-relative">
+            <div class="col-12">
+                <div class="header-align">
+                    <div class="header-align-start">
+                        <div class="header-logo-area"> <a href=""> <img class="logo-main" src="/static/asf/image/logo.png" alt="Logo"> <img class="logo-light" src="/skin/freight/static/image/logo.png" alt="Logo"> </a> </div>
+                    </div>
+                    <!-- 导航 -->
+                    <div class="header-align-center">
+                        <div class="header-navigation-area position-relative">
+                            <ul class="main-menu nav">
+                                <li><a href="/"><span>Home</span></a></li>
+                                <li class="active"><a style="color:#e5252a" href="/about/index"><span>About</span></a></li>
+                                <li class="has-submenu"><a href="#/"><span>Membership</span></a>
+                                    <ul class="submenu-nav">
+                                        <li><a href="/eminent/index"><span>ASF eminent</span></a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="/directory/index"><span>Directory</span></a></li>
+                                <li><a href="/contact/index"><span>Contact</span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- 注册登录 -->
+                    <div class="header-align-end">
+                        {if $userinfo}
+<!--                        <div class="" > <a class="" style="border-radius:5px;font-size:20px;font-weight:bold;background-color: #164282;color:white;padding:10px;text-transform: capitalize;" href="/member/index/index"><span></span> hi,{$userinfo.username}</a> &lt;!&ndash;<a class="btn-registration" href="member/index/logout"><span></span> Logout</a>&ndash;&gt;
+                            <button class="btn-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#AsideOffcanvasMenu" aria-controls="AsideOffcanvasMenu"> <i class="icofont-navigation-menu"></i> </button>
+                        </div>-->
+
+                        <div class="header-action-area"> <a style="border-radius:5px;" class="btn-registration" href="/member/index/index">hi,{$userinfo.username}</a> <a style="border-radius:5px;" class="btn-registration" href="/member/index/upgrade">Upgrade ASF Eminent</a>
+                            <button class="btn-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#AsideOffcanvasMenu" aria-controls="AsideOffcanvasMenu"> <i class="icofont-navigation-menu"></i> </button>
+                        </div>
+
+
+                        {else}
+                        <div class="header-action-area"> <a class="btn-registration" href="/member/index/login"><span>+</span> Login</a> <a class="btn-registration" href="/member/index/register"><span>+</span> Registration</a>
+                            <button class="btn-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#AsideOffcanvasMenu" aria-controls="AsideOffcanvasMenu"> <i class="icofont-navigation-menu"></i> </button>
+                        </div>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

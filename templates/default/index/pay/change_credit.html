@@ -1,0 +1,65 @@
+{template file="member/header.html"/}
+<div class="layui-card pd-20 no-shadow">
+    <div class="layui-card-header fly-title">
+        <h2>积分兑换</h2>
+    </div>
+    <div class="layui-card-body">
+        <form class="layui-form" method="post">
+            <div class="layui-form-item">
+                <label class="layui-form-label">剩余金额</label>
+                <div class="layui-input-block">
+                    <input type="text" autocomplete="off" class="layui-input" value="{$userinfo.amount}" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">剩余积分</label>
+                <div class="layui-input-block">
+                    <input type="text" autocomplete="off" class="layui-input" value="{$userinfo.point}" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">兑换金额</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="money" id="money" lay-verify="required" placeholder="请输入兑换金额" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">可兑换积分数：<font id="point" style="color:#F00; font-size:18px; font-weight:700">0</font>点 <font id="alert" style="color:#F00; font-size:18px;font-weight:700"></font>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit data-refresh="false">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{template file="member/layui.html"/}
+<script type="text/javascript">
+layui.use('yznForm', function() {
+    var yznForm = layui.yznForm;
+
+    yznForm.bindevent($("form.layui-form"),'', function (data,res) {
+        layer.msg(res.msg, {
+            offset: '15px',
+            icon: 1,
+            time: 1000
+        }, function() {
+            window.location.href = res.url;
+        });
+        return false;
+    });
+
+    $("#point").html($("#money").val() * {if isset($Member_config['rmb_point_rate'])}{$Member_config['rmb_point_rate']}{else}10{/if});
+    $("#money").keyup(function() {
+        $(this).val($(this).val().replace(/[^\d]/g, ''));
+        $("#point").html($("#money").val() * {if isset($Member_config['rmb_point_rate'])}{$Member_config['rmb_point_rate']}{else}10{/if});
+        if ({$userinfo.amount} < $(this).val()) {
+            $("#alert").html('您的余额不足');
+        } else {
+            $("#alert").html('');
+        }
+    });
+});
+</script>
+{template file="member/footer.html"/}

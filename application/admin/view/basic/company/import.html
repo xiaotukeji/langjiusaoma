@@ -1,0 +1,83 @@
+{extend name="index_layout"/}
+{block name="main"}
+<form class="layui-form" method="post">
+    {:token()}
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label" >上传excel文件（符合标准格式)</label>
+        <div class="layui-input-block">
+            <div class="layui-col-xs4" style="width:420px;">
+                <input type="text" name="excel_file"  id="c-company" value="" class="layui-input">
+            </div>
+            <button type="button" class="layui-btn faupload" id="faupload-company" data-multiple="false" data-input-id="c-company" data-preview-id="p-company" data-type="file">
+                <i class="layui-icon layui-icon-upload"></i> Upload</button>
+
+            <!--<ul class="layui-row list-inline plupload-preview" id="p-company"></ul>-->
+        </div>
+
+    </div>
+
+    <div class="layui-form-item layer-footer">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+
+<script>
+/*
+$(document).ready(function (){
+    $.ajax({
+        type: 'get',
+        url: '/api/country/getCountryList', // 注意：URL 应为小写
+        /!*data:parentId,*!/
+        success: function (res){
+
+            res = JSON.parse(res);
+            $("#Country").empty();
+
+
+
+            $("#Country").append('<option value="">Choose Country</option>');
+            $("#Country").append('<option value="">1</option>');
+            $("#Country").append('<option value="">2</option>');
+            $.each(res,function (index,item){
+
+                /!* $("#Country").append('<option value="'+item.english_name+'">'+item.english_name+'</option>');*!/
+
+                $("#Country").append('<option value="">Choose Country</option>');
+                console.log(item.english_name);
+            })
+
+        }
+    });
+
+
+});
+*/
+
+
+
+
+
+    /*    $("#country").change(function() {
+
+            alert( $("#country").val());
+
+        });*/
+</script>
+
+<script type="text/javascript">
+layui.use('yznForm', function() {
+    var yznForm = layui.yznForm;
+    yznForm.bindevent($("form.layui-form"));
+
+
+});
+</script>
+{/block}

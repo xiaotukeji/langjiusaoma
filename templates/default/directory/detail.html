@@ -1,0 +1,333 @@
+{include file="header" /}
+<style>
+    .pagination{
+
+    }
+    .pagination li{
+        background-color: #f4f7f7;
+        border-color: #f4f7f7;
+        border-radius: 5px;
+        color: #fff;
+        font-size: 14px;
+        width: 48px;
+        height: 48px;
+        line-height: 48px;
+        font-weight: bold;
+    }
+    .pagination li:hover{
+        background-color: #03a84e;
+        border-color: #03a84e;
+    }
+    .pagination li.active{
+        background-color: #03a84e;
+        border-color: #03a84e;
+    }
+
+</style>
+
+<body style="background-color: #f8f9fd">
+<main class="main-content">
+    <!--== Start Page Header Area Wrapper ==-->
+    <div class="page-header-area sec-overlay sec-overlay-black" data-bg-img="/static/asf/pic/bg3.jpg" style="padding: 149px 0 114px;">
+        <div class="container pt--0 pb--0">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-header-content">
+                        <h2 class="title">Directory</h2>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--== End Page Header Area Wrapper ==-->
+
+
+    <!--== Start Blog Area Wrapper ==-->
+    <section class="blog-area blog-grid-area">
+        <div class="container">
+
+            <div class="row">
+
+
+                <div class="" style="background-color: #fff;margin-left:20px;margin-top:20px;padding:15px;border-radius: 10px;
+                box-shadow: 1px 1px 1px #9f9f9f;-webkit-box-shadow: 1px 1px 1px #9f9f9f;color: #e6e6e6">
+                    <!--== Start Blog Post Item ==-->
+                    <div class="post-item">
+
+                        <div class="content">
+                            <div class="thumb" style="margin-bottom: 20px;">
+                                <img src="{$company_info.logo}" alt="Image" style="width:100px;height:50px;"></a>
+                            </div>
+
+                            <h1 class="title">{$company_info.name}</h1>
+
+
+                            <div class="meta"> <label class="layui-icon layui-icon-location"></label>
+                                <span class="post-time">{$company_info.Country}:{$company_info.address}</span>
+
+                            </div>
+                            <div style="margin-top:20px;">
+                                {volist name="PrimaryService" id="sub"}
+                                    <span class="post-time" style="background-color: #16baaa;color: white;padding:5px;line-height: 40px;">{$sub}</span>
+                                {/volist}
+
+                            </div>
+
+                            <!--<h2 class="title" style="margin-top:30px;">Basic Info</h2>-->
+
+
+
+                            <h2 class="title" style="margin-top:30px;">Contact Us</h2>
+
+
+                                {if $userinfo.vip}
+                                <div class="meta" style="margin-bottom: 30px;">
+                                    <!--<label class="layui-icon layui-icon-website"></label>-->
+                                    <label class="" style="font-size:14px;font-weight: bold;">Company Web: </label>
+                                    <span class="post-time" style="font-size:14px;padding-left:10px;">{$company_info.CompanyWeb}</span>
+
+                                </div>
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-user"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Responsible Person: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">{$company_info.ResponsiblePerson}</span>
+
+                            </div>
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Job Title: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">{$company_info.JobTitle}</span>
+                            </div>
+
+
+
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Email1: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">{$company_info.email}</span>
+                            </div>
+
+
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Email2: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">{$company_info.email2}</span>
+                            </div>
+
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Email3: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">{$company_info.email3}</span>
+                            </div>
+
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Email4: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">{$company_info.email4}</span>
+                            </div>
+
+
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Tel: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">{$company_info.mobile}</span>
+                            </div>
+                            <div class="meta" style="margin-bottom: 10px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Company Profile: </label>
+                                <!--<span class="post-time" style="font-size:14px;">{$company_info.CompanyProfile}</span>-->
+                            </div>
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <!--<label class=""style="font-size:14px;font-weight: bold;">Company Profile: </label>-->
+                                <span class="post-time" style="font-size:14px;padding-left:30px;line-height: 30px;">{$company_info.CompanyProfile}</span>
+                            </div>
+
+
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Others: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">{$company_info.others}</span>
+                            </div>
+                                {else}
+<!--                                <div class="meta" style="margin-bottom: 10px;">
+                                    <label class="layui-icon layui-icon-website"></label>
+                                    <span class="post-time" style="font-size:14px;">www.***.com</span>
+
+                                </div>
+                                <div class="meta" style="margin-bottom: 10px;">
+                                    <label class="layui-icon layui-icon-user"></label>
+                                    <span class="post-time" style="font-size:14px;">***</span>
+
+                                </div>
+                                <div class="meta" style="margin-bottom: 10px;">
+                                    <label class="layui-icon layui-icon-email"></label>
+                                    <span class="post-time" style="font-size:14px;">***@***.com</span>
+                                    <a style="border-radius:3px;background-color:#164282; color: white;padding:5px;" href="/member/index/upgrade.html">
+                                        Click For ASF Eminet</a></span>
+                                </div>-->
+
+
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-website"></label>-->
+                                <label class="" style="font-size:14px;font-weight: bold;">Company Web: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">www.***.com</span>
+
+                            </div>
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-user"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Responsible Person: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">***</span>
+
+                            </div>
+
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Job Title: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">***</span>
+                            </div>
+
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Email: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">***@***.com</span>
+                            </div>
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Tel: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">***</span>
+                            </div>
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Company Profile: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">***</span>
+                            </div>
+                            <div class="meta" style="margin-bottom: 30px;">
+                                <!--<label class="layui-icon layui-icon-email"></label>-->
+                                <label class=""style="font-size:14px;font-weight: bold;">Others: </label>
+                                <span class="post-time" style="font-size:14px;padding-left:10px;">***</span>
+                            </div>
+
+                                {/if}
+
+
+
+                            <h2 class="title" style="margin-top:80px;"><a href="/member/index/upgrade">You are not VIP? Click For ASF Eminent</a></a></h2>
+
+<!--                            <div class="thumb" style="margin-top: 30px;">
+
+
+                                <a href="" style="width:120px;float:left;background-color: #3264ff;color:#fff;" class="form-control" >Get Contacts</a>
+                            </div>-->
+
+                    <!--== End Blog Post Item ==-->
+                </div>
+
+
+</div>
+                    </div>
+
+            </div>
+
+            </div>
+
+        </div>
+    </section>
+    <!--== End Blog Area Wrapper ==-->
+</main>
+
+</body>
+{include file="footer" /}
+
+
+
+<!--=== jQuery Modernizr Min Js ===-->
+<script src="/static/asf/js/modernizr.js"></script>
+<!--=== jQuery Min Js ===-->
+<script src="/static/asf/js/jquery-main.js"></script>
+<!--=== jQuery Migration Min Js ===-->
+<script src="/static/asf/js/jquery-migrate.js"></script>
+<!--=== jQuery Popper Min Js ===-->
+<script src="/static/asf/js/popper.min.js"></script>
+<!--=== jQuery Bootstrap Min Js ===-->
+<script src="/static/asf/js/bootstrap.min.js"></script>
+<!--=== jQuery Swiper Min Js ===-->
+<script src="/static/asf/js/swiper.min.js"></script>
+<!--=== jQuery Fancybox Min Js ===-->
+<script src="/static/asf/js/fancybox.min.js"></script>
+<!--=== jQuery Aos Min Js ===-->
+<script src="/static/asf/js/aos.min.js"></script>
+<!--=== jQuery Counterup Min Js ===-->
+<script src="/static/asf/js/counterup.js"></script>
+<!--=== jQuery Waypoint Js ===-->
+<script src="/static/asf/js/waypoint.js"></script>
+
+<!--=== jQuery Custom Js ===-->
+<script src="/static/asf/js/custom.js?1"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script>
+    // 初始化 Swiper 实例
+    var swiper = new Swiper('.swiper-container', {
+        direction: 'horizontal', // 横向滚动
+        loop: true, // 循环滚动
+        autoplay: {
+            delay: 4000, // 每隔2秒自动滚动
+        },
+        slidesPerView: 'auto', // 根据内容自动确定每个视图的宽度
+        slidesPerView: 5, // 每次显示5个文字
+        spaceBetween: 10, // 文字之间的间距
+        speed: 4000, // 滚动速度，单位毫秒
+        autoplay: {
+            delay: 0,
+            //disableOnInteraction: false,
+        },
+        //loopAdditionalSlides: 10, // 循环滚动时需要额外增加的滑块数量
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('.selectpicker').selectpicker();
+        $('#category-select').select2({
+            templateResult: formatResult
+        });
+
+
+        // slider 替换
+        var slider = $("#slider");
+        var images = [
+            "/static/asf/pic/1.jpg",
+            "/static/asf/pic/2.jpg",
+            "/static/asf/pic/3.jpg"
+        ];
+        var currentIndex = 0;
+
+        function changeBackground() {
+            currentIndex = (currentIndex + 1) % images.length;
+            slider.css("background-image", "url(" + images[currentIndex] + ")");
+        }
+
+        setInterval(changeBackground, 5000); // 切换间隔，单位为毫秒（这里是每隔 5 秒切换一次）
+
+    });
+
+    function formatResult(option) {
+        if (!option.id) {
+            return option.text;
+        }
+        var imageUrl = $(option.element).data('image');
+        if (!imageUrl) {
+            return option.text;
+        }
+        var $image = $('<img style="width: 20px; height: auto; margin-right: 5px;" src="' + imageUrl + '">');
+        var $text = $('<span>' + option.text + '</span>');
+        var $result = $('<span></span>');
+        $result.append($image).append($text);
+        return $result;
+    }
+</script>

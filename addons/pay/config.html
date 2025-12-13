@@ -1,0 +1,229 @@
+{extend name="admin@index_layout"/}
+{block name="main"}
+<form class="layui-form" action="" method="post">
+    <div class="layui-tab">
+      <ul class="layui-tab-title">
+        <li class="layui-this">基础设置</li>
+        <li>微信支付</li>
+        <li>支付宝</li>
+      </ul>
+      <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            {foreach $data.config as $item}
+            {if $item.name=='rechargetips' || $item.name=='defaultmoney'|| $item.name=='minmoney'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$item.title}</label>
+                <div class="layui-input-block">
+                    <input type="text" name="config[{$item.name}]" placeholder="请输入{$item.title}" class="layui-input {$item.name}" value="{$item.value}">
+                </div>
+            </div>
+            {/if}
+            {if $item.name=='moneylist'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$item.title}</label>
+                <dl class="layui-input-block fieldlist" data-name="config[{$item.name}]" data-id="{$item.name}">
+                            <dd>
+                        <ins>键名</ins>
+                        <ins>键值</ins>
+                    </dd>
+                    <dd><button type="button" class="layui-btn btn-append">追加</button></dd>
+                    <textarea name="config[{$item.name}]" class="layui-textarea layui-hide">{$item.value|json_encode}</textarea>
+                </dl>
+                {if isset($item.tip) && $item.tip}<div class="layui-form-mid no-float layui-word-aux">{$item.tip|raw}</div>{/if}
+            </div>
+            <script type="text/html" id="{$item.name}Tpl">
+                <dd class="layui-form-item rules-item">
+                {{# layui.each(d.lists, function(index, item) { }}
+                    <input type="text" class="layui-input" name="{{item.name}}[{{item.index}}][key]" placeholder="键" value="{{item.key|| ''}}" />
+                    <input type="text" class="layui-input" name="{{item.name}}[{{item.index}}][value]" placeholder="值" value="{{item.value|| ''}}" />
+                    <button type="button" class="layui-btn layui-btn-danger btn-remove layui-btn-xs"><i class="iconfont icon-close"></i></button>
+                    <button type="button" class="layui-btn btn-dragsort layui-btn-xs"><i class="iconfont icon-yidong"></i></button>
+                {{# }); }}
+                </dd>
+            </script>
+            {/if}
+            {if $item.name=='defaultpaytype'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$item.title}</label>
+                <div class="layui-input-block">
+                    {foreach name="item.options" item="opt" key="opt_k"}
+                    <input type="radio" name="config[{$item.name}]" value="{$opt_k}" title="{$opt}" {eq name="item.value" value="$opt_k"} checked{/eq}>
+                    {/foreach}
+                </div>
+                {if isset($item.tip) && $item.tip}<div class="layui-form-mid no-float layui-word-aux">{$item.tip|raw}</div>{/if}
+            </div>
+            {/if}
+            {if $item.name=='paytypelist'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$item.title}</label>
+                <div class="layui-input-block">
+                    {foreach name="item.options" item="opt" key="opt_k"}
+                    <input type="checkbox" name="config[{$item.name}][]" lay-skin="primary" title="{$opt}" value="{$opt_k}" {in name="opt_k" value="$item.value|default=''"} checked{/in}>
+                    {/foreach}
+                </div>
+                {if isset($item.tip) && $item.tip}<div class="layui-form-mid2 layui-word-aux">{$item.tip|raw}</div>{/if}
+            </div>
+            {/if}
+            {/foreach}
+        </div>
+        {foreach $data.config as $item}
+        {if $item.name=='wechat'}
+        <div class="layui-tab-item">
+            <div class="layui-form-item">
+                <label class="layui-form-label">公众号APPID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="config[wechat][app_id]" placeholder="请输入公众号APPID" class="layui-input" value="{$item.value.app_id}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">AppSecret</label>
+                <div class="layui-input-block">
+                    <input type="text" name="config[wechat][app_secret]" placeholder="请输入AppSecret" class="layui-input" value="{$item.value.app_secret}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户ID(MCHID)</label>
+                <div class="layui-input-block">
+                    <input type="text" name="config[wechat][mch_id]" placeholder="请输入商户ID(MCHID)"  class="layui-input" value="{$item.value.mch_id}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户秘钥(KEY)</label>
+                <div class="layui-input-block">
+                    <textarea name="config[wechat][key]" placeholder="请输入商户秘钥(KEY)" class="layui-textarea">{$item.value.key}</textarea>
+                </div>
+            </div>
+            <div class="alert alert-info-light">
+                如涉及退款，红包和转账等情况时请将证书上传对应目录
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">微信API证书cert</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" value="/addons/pay/certs/apiclient_cert.pem" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">微信API证书key</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" value="/addons/pay/certs/apiclient_key.pem" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">沙箱模式</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="config[wechat][mode]" value="1" title="启用" {if $item.value.mode==1}checked{/if}>
+                    <input type="radio" name="config[wechat][mode]" value="0" title="禁用" {if $item.value.mode==0}checked{/if}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">日志</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="config[wechat][log]" value="1" title="启用" {if $item.value.log==1}checked{/if}>
+                    <input type="radio" name="config[wechat][log]" value="0" title="禁用" {if $item.value.log==0}checked{/if}>
+                </div>
+            </div>
+        </div>
+        {elseif $item.name=='alipay'}
+        <div class="layui-tab-item" id="alipay">
+            <div class="layui-form-item">
+                <label class="layui-form-label">应用ID(APPID)</label>
+                <div class="layui-input-block">
+                    <input type="text" name="config[alipay][app_id]" placeholder="请输入应用ID(APPID)" class="layui-input" value="{$item.value.app_id}">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户应用私钥(private_key)</label>
+                <div class="layui-input-block">
+                    <textarea name="config[alipay][private_key]" placeholder="请输入商户应用私钥" class="layui-textarea">{$item.value.private_key}</textarea>
+                </div>
+            </div>
+            <div class="alert alert-info-light">
+                如涉及退款，红包和转账等情况时请改为公钥证书模式并将证书上传对应目录
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">签名方式</label>
+                <div class="layui-input-block">
+                    <input type="radio" lay-filter="radio-filter" name="config[alipay][signtype]" value="publickey" title="普通公钥" {if $item.value.signtype=='publickey'}checked{/if}>
+                    <input type="radio" lay-filter="radio-filter" name="config[alipay][signtype]" value="cert" title="公钥证书" {if $item.value.signtype=='cert'}checked{/if}>
+                </div>
+            </div>
+            <div class="{if $item.value.signtype=='cert'}layui-hide{/if}" data-signtype="publickey">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">支付宝公钥(alipay_public_key)</label>
+                    <div class="layui-input-block">
+                        <textarea name="config[alipay][ali_public_key]" placeholder="请输入支付宝公钥" class="layui-textarea">{$item.value.ali_public_key}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="{if $item.value.signtype=='publickey'}layui-hide{/if}" data-signtype="cert">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">支付宝公钥证书<br>(alipay_public_key)</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" value="/addons/pay/certs/alipayCertPublicKey.crt" disabled>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">应用公钥证书<br>(app_cert_public_key)</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" value="/addons/pay/certs/appCertPublicKey.crt" disabled>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">支付宝根证书<br>(alipay_root_cert)</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" value="/addons/pay/certs/alipayRootCert.crt" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">沙箱模式</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="config[alipay][mode]" value="1" title="启用" {if $item.value.mode==1}checked{/if}>
+                    <input type="radio" name="config[alipay][mode]" value="0" title="禁用" {if $item.value.mode==0}checked{/if}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">个人支付</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="config[alipay][isper]" value="1" title="启用" {if $item.value.isper==1}checked{/if}>
+                    <input type="radio" name="config[alipay][isper]" value="0" title="禁用" {if $item.value.isper==0}checked{/if}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">日志</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="config[alipay][log]" value="1" title="启用" {if $item.value.log==1}checked{/if}>
+                    <input type="radio" name="config[alipay][log]" value="0" title="禁用" {if $item.value.log==0}checked{/if}>
+                </div>
+            </div>
+        </div>
+        {/if}
+        {/foreach}
+      </div>
+    </div>
+    <div class="layui-form-item layer-footer">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit data-refresh="false">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+layui.use(['yznForm','form'], function() {
+    var form = layui.form,
+         yznForm = layui.yznForm;
+
+    yznForm.bindevent($("form.layui-form"));
+
+    form.on('radio(radio-filter)', function(data) {
+        $("#alipay [data-signtype]").addClass("layui-hide");
+        $("#alipay [data-signtype='" + data.value + "']").removeClass("layui-hide");
+    });
+});
+
+</script>
+{/block}

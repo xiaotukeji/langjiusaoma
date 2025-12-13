@@ -1,0 +1,50 @@
+{extend name="index_layout"/}
+{block name="main"}
+<div class="layui-card">
+    <div class="layui-card-header">数据中心</div>
+    <div class="layui-card-body">
+        <div class="layui-form">
+            <table class="layui-hide" id="currentTable" lay-filter="currentTable"
+></table>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+layui.use('yznTable', function() {
+    var table = layui.yznTable;
+
+    var init = {
+        table_elem: '#currentTable',
+        table_render_id: 'currentTable',
+        add_url: '{:url("add")}',
+        edit_url: '{:url("edit")}',
+        delete_url: '{:url("del")}',
+    };
+
+    table.render({
+        init: init,
+        toolbar: ['refresh','add'],
+        url: '{:url("index")}',
+        cols: [
+            [
+                { field: 'id', width: 80, title: 'ID'},
+                { field: 'title', width: 180, title: '数据名称', searchOp: 'like' },
+                { field: 'link', width: 520, title: '数据链接', search:false},
+                { field: 'data_time', title: '更新时间', search:false },
+
+                { width:100, title: '操作',templet: function (d){
+
+                        return yznTable.formatter.tool.call(this,d,this);
+
+                },operat: ['delete']}
+            ]
+        ],
+        page: {}
+    });
+
+    yznTable.bindevent();
+});
+</script>
+{/block}

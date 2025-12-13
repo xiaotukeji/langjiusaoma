@@ -1,0 +1,67 @@
+{include file="header" /}
+<div class="layui-card pd-20 no-shadow">
+    <div class="layui-card-header fly-title">
+        <h2>VIP UPGRADE</h2>
+    </div>
+    <div class="layui-card-body">
+        {if $groupid > 0}
+        <form class="layui-form" method="post" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">VIP FEE</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="upgrade_type" value="0" title="{$memberGroup[$groupid]['price_y']}$/Year" checked>
+<!--                    <input type="radio" name="upgrade_type" value="1" title="{$memberGroup[$groupid]['price_m']}$/Month" style="display:none">
+                    <input type="radio" name="upgrade_type" value="2" title="{$memberGroup[$groupid]['price_d']}$/Day" class="layui-hide">-->
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">Buy years</label>
+                <div class="layui-input-inline">
+                    <input onKeyUp="this.value=this.value.replace(/[^\.\d]/g,'');this.value=this.value.replace('.','');" type="number" name="upgrade_date" required lay-verify="required" placeholder="input vip times" autocomplete="off" class="layui-input" value="1">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formDemo">Buy</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">Reset</button>
+                </div>
+            </div>
+        </form>
+        {else}
+        <table class="layui-table">
+            <colgroup>
+                <col width="120">
+                <col>
+                <col width="300">
+                <col width="80">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>VIP LEVEL</th>
+                    <th>Description</th>
+                    <th>VIP FEE</th>
+                    <th>Operation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $memberGroup as $key=>$vo }
+               <!-- {if $vo['point'] > $grouppoint}-->
+                <tr>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.description}</td>
+                    <td>
+                        {$vo.price_y}/Per Year
+<!--                        {$vo.price_m}/Per Month
+                        {$vo.price_d}/Per Day-->
+                    </td>
+                    <td><a href="{:url('upgrade',['groupid'=>$vo['id']])}" class="layui-btn  layui-btn-sm">Upgrade</a></td>
+                </tr>
+                <!--{/if}-->
+                {/foreach}
+            </tbody>
+        </table>
+        {/if}
+    </div>
+</div>
+{include file="layui" /}
+{include file="footer" /}

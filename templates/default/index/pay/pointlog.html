@@ -1,0 +1,49 @@
+{template file="member/header.html"/}
+<div class="layui-card pd-20 no-shadow">
+    <div class="layui-card-header fly-title">
+        <h2>积分变更记录</h2>
+    </div>
+    <div class="layui-card-body">
+        <table class="layui-hide" id="currentTable" lay-filter="currentTable"></table>
+    </div>
+</div>
+{template file="member/layui.html"/}
+<script>
+layui.use(['yznTable','form'], function() {
+    var yznTable = layui.yznTable,
+        $ = layui.$,
+        form = layui.form;
+
+    var init = {
+        table_elem: '#currentTable',
+        table_render_id: 'currentTable',
+    };
+
+    yznTable.render({
+        init: init,
+        toolbar: ['refresh'],
+        url: '{:url("pointlog")}',
+        search:false,
+        cols: [
+            [
+                { field: 'point', width: 120, title: '变更积分' , templet: function(d){
+                        if(d.point > 0){
+                            return '<span class="layui-font-green">+' + d.point + '</span>';
+                        } else {
+                            return '<span class="layui-font-red">' + d.point + '</span>';
+                        }
+                    }
+                },
+                { field: 'before', width: 100, title: '变更前'},
+                { field: 'after', width: 180, title: '变更后' },
+                { field: 'remark',title: '备注' },
+                { field: 'create_time', width: 180, title: '创建时间',search: 'range'},
+            ]
+        ],
+        page: {}
+    });
+
+    yznTable.bindevent();
+});
+</script>
+{template file="member/footer.html"/}
