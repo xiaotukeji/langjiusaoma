@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+    <title>模拟微信环境 - 页面内容分析</title>
+    <script>
+        // 模拟微信User-Agent
+        Object.defineProperty(navigator, 'userAgent', {
+            get: function() {
+                return 'Mozilla/5.0 (Linux; Android 11; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/91.0.4472.120 Mobile Safari/537.36 MicroMessenger/8.0.40.2420(0x28002837) Process/tools NetType/WIFI Language/zh_CN ABI/arm64';
+            }
+        });
+        
+        // 监听所有网络请求
+        var originalFetch = window.fetch;
+        window.fetch = function(...args) {
+            console.log('Fetch请求:', args);
+            return originalFetch.apply(this, args);
+        };
+        
+        var originalXHR = window.XMLHttpRequest;
+        window.XMLHttpRequest = function() {
+            var xhr = new originalXHR();
+            var originalOpen = xhr.open;
+            xhr.open = function(method, url, ...rest) {
+                console.log('XHR请求:', method, url);
+                return originalOpen.apply(this, [method, url, ...rest]);
+            };
+            return xhr;
+        };
+        
+        // 监听动态添加的script标签
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.tagName === 'SCRIPT' && node.src) {
+                        console.log('动态加载的脚本:', node.src);
+                    }
+                    if (node.tagName === 'SCRIPT' && node.innerHTML) {
+                        console.log('内联脚本内容:', node.innerHTML.substring(0, 200));
+                    }
+                });
+            });
+        });
+        
+        window.addEventListener('DOMContentLoaded', function() {
+            observer.observe(document.head, { childList: true, subtree: true });
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    </script>
+</head>
+<body>
+    <h1>模拟微信环境 - 页面内容捕获</h1>
+    <div id="content"></div>
+    <div id="log" style="margin-top: 20px; padding: 10px; background: #f0f0f0; font-family: monospace; font-size: 12px;"></div>
+    
+    <script>
+        var logDiv = document.getElementById('log');
+        function log(msg) {
+            console.log(msg);
+            logDiv.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + msg + '</div>';
+        }
+        
+        log('开始加载页面...');
+        
+        // 使用iframe加载目标页面
+        var iframe = document.createElement('iframe');
+        iframe.src = 'http://e.langjiu.cn/?c=FVKXMH1S';
+        iframe.style.width = '100%';
+        iframe.style.height = '600px';
+        iframe.style.border = '1px solid #ccc';
+        
+        iframe.onload = function() {
+            log('iframe加载完成');
+            try {
+                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                log('iframe内容长度: ' + iframeDoc.documentElement.outerHTML.length);
+                
+                // 等待一段时间，看是否有动态内容
+                setTimeout(function() {
+                    var finalContent = iframeDoc.documentElement.outerHTML;
+                    log('最终内容长度: ' + finalContent.length);
+                    
+                    // 显示内容预览
+                    document.getElementById('content').innerHTML = '<h2>捕获的内容:</h2><pre style="max-height: 400px; overflow: auto; background: #fff; padding: 10px; border: 1px solid #ccc;">' + 
+                        finalContent.replace(/</g, '&lt;').replace(/>/g, '&gt;').substring(0, 5000) + '</pre>';
+                    
+                    // 保存完整内容
+                    var blob = new Blob([finalContent], {type: 'text/html'});
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'captured_page.html';
+                    a.textContent = '下载完整内容';
+                    document.body.appendChild(a);
+                }, 3000);
+            } catch(e) {
+                log('无法访问iframe内容（跨域限制）: ' + e.message);
+                log('建议：直接在微信中打开页面，然后使用开发者工具查看完整内容');
+            }
+        };
+        
+        document.body.appendChild(iframe);
+    </script>
+</body>
+</html>
+
+
+
+
+

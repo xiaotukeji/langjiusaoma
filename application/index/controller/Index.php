@@ -119,9 +119,50 @@ class Index extends MemberBase
         // 根据ID查询产品信息，使用 whereRaw 确保区分大小写
         $product = Db::name('company')->whereRaw('BINARY `keys` = ?', [$key])->where('status', 1)->find();
         
-        // 设置默认的查询信息
-        $query_count = 1;
+        if (!$product) {
+            // 产品不存在
+            $this->assign('product', null);
+            $this->assign('query_times', 0);
+            return $this->fetch('/index');
+        }
+        
+        // 获取当前数据库中的查询次数，如果没有query_times字段或为null，默认为0
+        $current_query_times = 0;
+        if (isset($product['query_times']) && $product['query_times'] !== null && $product['query_times'] !== '') {
+            $current_query_times = intval($product['query_times']);
+        }
+        
+        // 每次扫码，查询次数增加1（用于更新数据库）
+        $new_query_times = $current_query_times + 1;
+        
+        // 更新数据库中的查询次数
+        Db::name('company')->where('id', $product['id'])->update([
+            'query_times' => $new_query_times,
+            'update_time' => time()
+        ]);
+        
+        // 如果是第一次查询（更新前是0），尝试记录首次查询时间
+        // 如果字段不存在，使用try-catch忽略错误
+        if ($current_query_times == 0) {
+            try {
+                Db::name('company')->where('id', $product['id'])->update([
+                    'first_query_time' => time()
+                ]);
+            } catch (\Exception $e) {
+                // 字段不存在，忽略错误，不影响主流程
+            }
+        }
+        
+        // 传递给模板的query_times是更新后的值（用于显示）
+        $query_times = $new_query_times;
+        
+        // 设置查询信息
+        $query_count = $new_query_times;
+        // 安全获取首次查询时间，如果字段不存在则使用当前时间
         $first_query_time = date('Y-m-d H:i:s');
+        if (isset($product['first_query_time']) && $product['first_query_time'] && $product['first_query_time'] > 0) {
+            $first_query_time = date('Y-m-d H:i:s', $product['first_query_time']);
+        }
         $last_query_time = date('Y-m-d H:i:s');
         $last_query_ip = $this->request->ip();
         
@@ -154,6 +195,7 @@ class Index extends MemberBase
         $this->assign('product', $product);
         
         // 将查询记录信息传给模板
+        $this->assign('query_times', $query_times);
         $this->assign('query_count', $query_count);
         $this->assign('first_query_time', $first_query_time);
         $this->assign('last_query_time', $last_query_time);

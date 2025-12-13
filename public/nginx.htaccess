@@ -1,24 +1,10 @@
-# 针对 /index 路径，如果 URL 中没有 nocache 参数，自动添加并重定向
-# 使用 Nginx 变量生成唯一值，避免浏览器历史记录规范化 URL 大小写
 location /index {
-    # 检查 nocache 参数是否存在（不区分大小写）
-    if ($args !~* "nocache=") {
-        # 如果不存在，生成唯一的 nocache 参数值
-        # 使用 $msec（毫秒时间戳，如果支持）或 $request_time（请求时间）
-        set $nocache_val $msec;
-        # 如果 $msec 不可用，使用 $request_id 或当前时间戳
-        # 注意：$msec 在某些 Nginx 版本中可能不可用，可以使用时间戳
-        # 这里使用简单的固定值作为备用，实际使用时建议在服务器配置中定义变量
-        
-        # 重定向到包含 nocache 的 URL，保留原始查询字符串和大小写
-        if ($args) {
-            return 302 $scheme://$host$uri?$args&nocache=$nocache_val;
-        }
-        return 302 $scheme://$host$uri?nocache=$nocache_val;
+    if ($args !~ nocache=) {
+        set $args "${args}&nocache=$msec";
+        return 302 $scheme://$host$uri?$args;
     }
-    # 原有的重写规则
     if (!-e $request_filename){
-        rewrite  ^(.*)$  /index.php?s=$1  last;   break;
+        rewrite  ^(.*)$  /index.php?s=$1  last;
     }
 }
 
