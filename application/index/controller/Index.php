@@ -10,6 +10,36 @@ class Index extends MemberBase
     
     public function index()
     {
+        // 如果没有key参数，重定向到后台管理页面
+        $key = '';
+        // 从 REQUEST_URI 提取原始 key 值，保持大小写
+        if (isset($_SERVER['REQUEST_URI'])) {
+            $queryString = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
+            if ($queryString) {
+                parse_str($queryString, $params);
+                if (isset($params['key'])) {
+                    $key = $params['key'];
+                }
+            }
+        }
+        // 如果还是没有获取到 key，尝试从 QUERY_STRING 获取
+        if (empty($key) && isset($_SERVER['QUERY_STRING'])) {
+            parse_str($_SERVER['QUERY_STRING'], $params);
+            if (isset($params['key'])) {
+                $key = $params['key'];
+            }
+        }
+        // 如果还是没有，从 $_GET 获取（可能已被转换）
+        if (empty($key) && isset($_GET['key'])) {
+            $key = $_GET['key'];
+        }
+        
+        // 如果没有key参数，重定向到后台管理页面
+        if (empty($key)) {
+            $this->redirect(url('admin/index/index'));
+            return;
+        }
+        
         // 如果 URL 中没有 nocache 参数，自动添加并重定向，避免浏览器历史记录规范化 URL 大小写
         // 从 REQUEST_URI 提取原始参数，使用时间戳+key 生成唯一的 nocache 参数，完全保留大小写
         if (!isset($_GET['nocache'])) {

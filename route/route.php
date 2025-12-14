@@ -12,3 +12,16 @@
 // +----------------------------------------------------------------------
 // | 全局路由
 // +----------------------------------------------------------------------
+use think\facade\Route;
+
+// 根路径重定向到后台管理页面（如果带有key参数则继续走index模块的扫码逻辑）
+Route::get('/', function() {
+    // 检查是否有key参数，如果有则继续走index模块逻辑
+    $key = request()->param('key', '');
+    if (!empty($key)) {
+        // 有key参数，重定向到index模块处理扫码逻辑
+        return redirect(url('index/index/index', ['key' => $key]));
+    }
+    // 没有key参数，重定向到后台管理页面
+    return redirect(url('admin/index/index'));
+});
