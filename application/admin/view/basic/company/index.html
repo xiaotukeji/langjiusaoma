@@ -185,17 +185,17 @@
                 return;
             }
             
-            // 显示下载进度
+            // 显示下载提示（只显示一次，不频繁更新）
             var total = downloadList.length;
-            var current = 0;
-            var loadingIndex = layer.msg('正在准备压缩 ' + total + ' 个二维码...', {icon: 16, time: 0});
+            var loadingIndex = layer.msg('下载中，请稍候...', {icon: 16, time: 0});
             
             // 创建ZIP对象
             var zip = new JSZip();
             var failedCount = 0;
+            var hasShownProgress = false;
             
             // 使用Promise.all并行获取所有二维码
-            var promises = downloadList.map(function(item) {
+            var promises = downloadList.map(function(item, index) {
                 var qrcodeUrl = '{:url("qrcode")}?id=' + item.id;
                 var filename = 'product_' + item.id + '.png';
                 
@@ -209,8 +209,13 @@
                     .then(function(blob) {
                         // 添加到ZIP
                         zip.file(filename, blob);
-                        current++;
-                        layer.msg('正在压缩 ' + current + '/' + total + ' (' + item.id + ')...', {icon: 16, time: 0});
+                        
+                        // 只在第一个或第二个完成时更新一次提示，之后不再更新
+                        if (!hasShownProgress && (index === 0 || index === 1)) {
+                            layer.msg('下载中，请稍候...', {icon: 16, time: 0});
+                            hasShownProgress = true;
+                        }
+                        
                         return {success: true, id: item.id};
                     })
                     .catch(function(error) {
@@ -222,8 +227,6 @@
             
             // 等待所有请求完成
             Promise.all(promises).then(function(results) {
-                layer.msg('正在生成ZIP文件...', {icon: 16, time: 0});
-                
                 // 生成ZIP文件
                 zip.generateAsync({type: 'blob'})
                     .then(function(content) {
@@ -251,6 +254,11 @@
                         layer.msg('生成ZIP文件失败: ' + error.message, {icon: 2});
                         console.error('ZIP生成失败:', error);
                     });
+            })
+            .catch(function(error) {
+                layer.close(loadingIndex);
+                layer.msg('下载失败: ' + error.message, {icon: 2});
+                console.error('批量下载失败:', error);
             });
         }
 
