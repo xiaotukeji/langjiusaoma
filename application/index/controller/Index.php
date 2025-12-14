@@ -56,7 +56,7 @@ class Index extends MemberBase
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>正在跳转...</title>
+    <title>加载中...</title>
     <style>
         * {
             margin: 0;
@@ -90,20 +90,14 @@ class Index extends MemberBase
         }
         .loading-text {
             font-size: 18px;
-            margin-bottom: 10px;
             font-weight: 500;
-        }
-        .loading-tip {
-            font-size: 14px;
-            opacity: 0.8;
         }
     </style>
 </head>
 <body>
     <div class="loading-container">
         <div class="loading-spinner"></div>
-        <div class="loading-text">正在跳转中...</div>
-        <div class="loading-tip">请稍候</div>
+        <div class="loading-text">加载中，请稍后</div>
     </div>
     <script>
         setTimeout(function() {
