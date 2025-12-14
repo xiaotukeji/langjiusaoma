@@ -122,6 +122,13 @@
                                 method: 'none',
                                 extend: 'data-key="{{d.keys}}"',
                                 field: 'keys'
+                            }, {
+                                text: "<i class='layui-icon layui-icon-qrcode'>二维码</i>",
+                                title: '生成二维码',
+                                class: 'layui-btn layui-btn-xs layui-btn-warm show-qrcode-btn',
+                                method: 'none',
+                                extend: 'data-id="{{d.id}}"',
+                                field: 'id'
                             }],
                             'edit', 'delete'
                         ]}
@@ -246,6 +253,49 @@
 
             return false;
         });
+
+        // 监听二维码按钮点击事件
+        $(document).on('click', '.show-qrcode-btn', function() {
+            var that = $(this);
+            var id = that.data('id');
+            
+            if (!id) {
+                layer.msg('产品ID不能为空', {icon: 2});
+                return false;
+            }
+            
+            // 构建二维码图片URL
+            var qrcodeUrl = '{:url("qrcode")}?id=' + id;
+            
+            // 使用layer弹窗显示二维码
+            layer.open({
+                type: 1,
+                title: '产品二维码',
+                area: ['400px', '500px'],
+                content: '<div style="text-align:center; padding:20px;">' +
+                         '<img src="' + qrcodeUrl + '" style="max-width:100%;" alt="二维码">' +
+                         '<div style="margin-top:15px;">' +
+                         '<button class="layui-btn layui-btn-sm" onclick="downloadQrcode(\'' + qrcodeUrl + '\', \'product_' + id + '.png\')">下载二维码</button>' +
+                         '</div>' +
+                         '</div>',
+                btn: ['关闭'],
+                yes: function(index) {
+                    layer.close(index);
+                }
+            });
+            
+            return false;
+        });
+        
+        // 下载二维码函数
+        window.downloadQrcode = function(url, filename) {
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
     });
 </script>
 {/block}

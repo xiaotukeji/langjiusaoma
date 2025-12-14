@@ -13,6 +13,9 @@ namespace app\admin\controller\basic;
 use app\admin\model\AdminCompany as Admin_Company;
 use app\common\controller\Adminbase;
 use think\Db;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
+use think\Response;
 
 /**
  * 产品管理
@@ -430,6 +433,55 @@ class Company extends Adminbase
         } else {
             $this->error('复制失败');
         }
+    }
+
+    /**
+     * 生成产品链接的二维码
+     * @return Response
+     */
+    public function qrcode()
+    {
+        $id = $this->request->param('id/d', 0);
+        if (empty($id)) {
+            $this->error('产品ID不能为空');
+        }
+        
+        $row = $this->modelClass->get($id);
+        if (!$row) {
+            $this->error('产品不存在');
+        }
+        
+        // 获取入口域名配置
+        $rukouUrl = Db::name('config')->where('name', 'rukou_url')->value('value');
+        $linkBaseUrl = '';
+        if (!empty($rukouUrl)) {
+            // 确保有协议
+            if (!preg_match('/^https?:\/\//', $rukouUrl)) {
+                $linkBaseUrl = 'https://' . $rukouUrl;
+            } else {
+                $linkBaseUrl = $rukouUrl;
+            }
+        } else {
+            // 如果没有配置，使用当前域名
+            $linkBaseUrl = $this->request->domain();
+        }
+        
+        // 构建完整链接（只包含key参数，nocache会在新页面自动添加）
+        $timestamp = time();
+        $fullLink = rtrim($linkBaseUrl, '/') . '/index?key=' . urlencode($row->keys) . '&nocache=' . $timestamp . $id;
+        
+        // 生成二维码
+        $qrCode = new QrCode($fullLink);
+        $qrCode->setWriterByName('png');
+        $qrCode->setMargin(10);
+        $qrCode->setEncoding('UTF-8');
+        $qrCode->setSize(300);
+        $qrCode->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
+        $qrCode->setForegroundColor(['r' => 0, 'g' => 0, 'b' => 0, 'a' => 0]);
+        $qrCode->setBackgroundColor(['r' => 255, 'g' => 255, 'b' => 255, 'a' => 0]);
+        $qrCode->setValidateResult(false);
+        
+        return new Response($qrCode->writeString(), 200, ['Content-Type' => $qrCode->getContentType()]);
     }
 
 }
