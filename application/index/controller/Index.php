@@ -30,22 +30,34 @@ class Index extends MemberBase
                     if (!preg_match('/^https?:\/\//', $luodiUrl)) {
                         $luodiUrl = 'https://' . $luodiUrl;
                     }
-                    // 获取当前请求的路径和参数
-                    $pathinfo = $this->request->pathinfo();
-                    // 获取原始查询字符串，保留所有参数
+                    // 获取当前请求的完整路径和参数（从REQUEST_URI提取，确保完整保留）
+                    $requestPath = '';
                     $queryString = '';
-                    if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
-                        $queryString = $_SERVER['QUERY_STRING'];
-                    } elseif (isset($_SERVER['REQUEST_URI'])) {
+                    
+                    if (isset($_SERVER['REQUEST_URI'])) {
                         $parsed = parse_url($_SERVER['REQUEST_URI']);
+                        // 获取路径部分（包含/index等）
+                        if (isset($parsed['path']) && !empty($parsed['path'])) {
+                            $requestPath = $parsed['path'];
+                        }
+                        // 获取查询字符串（包含所有参数）
                         if (isset($parsed['query']) && !empty($parsed['query'])) {
                             $queryString = $parsed['query'];
                         }
+                    } else {
+                        // 如果REQUEST_URI不可用，使用pathinfo和QUERY_STRING
+                        $requestPath = $this->request->pathinfo();
+                        if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
+                            $queryString = $_SERVER['QUERY_STRING'];
+                        }
                     }
-                    // 构建跳转URL
+                    
+                    // 构建跳转URL：只替换域名，保留完整路径和参数
                     $redirectUrl = rtrim($luodiUrl, '/');
-                    if (!empty($pathinfo)) {
-                        $redirectUrl .= '/' . ltrim($pathinfo, '/');
+                    if (!empty($requestPath)) {
+                        // 确保路径以/开头
+                        $requestPath = '/' . ltrim($requestPath, '/');
+                        $redirectUrl .= $requestPath;
                     }
                     if (!empty($queryString)) {
                         $redirectUrl .= '?' . $queryString;
