@@ -185,17 +185,16 @@
                 return;
             }
             
-            // 显示下载提示（只显示一次，不频繁更新）
+            // 显示下载提示（只显示一次，之后不再更新）
             var total = downloadList.length;
             var loadingIndex = layer.msg('下载中，请稍候...', {icon: 16, time: 0});
             
             // 创建ZIP对象
             var zip = new JSZip();
             var failedCount = 0;
-            var hasShownProgress = false;
             
             // 使用Promise.all并行获取所有二维码
-            var promises = downloadList.map(function(item, index) {
+            var promises = downloadList.map(function(item) {
                 var qrcodeUrl = '{:url("qrcode")}?id=' + item.id;
                 var filename = 'product_' + item.id + '.png';
                 
@@ -207,15 +206,8 @@
                         return response.blob();
                     })
                     .then(function(blob) {
-                        // 添加到ZIP
+                        // 添加到ZIP（不更新提示，保持提示框稳定）
                         zip.file(filename, blob);
-                        
-                        // 只在第一个或第二个完成时更新一次提示，之后不再更新
-                        if (!hasShownProgress && (index === 0 || index === 1)) {
-                            layer.msg('下载中，请稍候...', {icon: 16, time: 0});
-                            hasShownProgress = true;
-                        }
-                        
                         return {success: true, id: item.id};
                     })
                     .catch(function(error) {
