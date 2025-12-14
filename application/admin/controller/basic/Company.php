@@ -80,6 +80,23 @@ class Company extends Adminbase
             $result = ["code" => 0, 'count' => $list->total(), "data" => $list->items()];
             return json($result);
         }
+        
+        // 获取入口域名配置，用于生成复制链接
+        $rukouUrl = Db::name('config')->where('name', 'rukou_url')->value('value');
+        $linkBaseUrl = '';
+        if (!empty($rukouUrl)) {
+            // 确保有协议
+            if (!preg_match('/^https?:\/\//', $rukouUrl)) {
+                $linkBaseUrl = 'https://' . $rukouUrl;
+            } else {
+                $linkBaseUrl = $rukouUrl;
+            }
+        } else {
+            // 如果没有配置，使用当前域名
+            $linkBaseUrl = $this->request->domain();
+        }
+        
+        $this->assign('linkBaseUrl', $linkBaseUrl);
         return $this->fetch();
     }
 

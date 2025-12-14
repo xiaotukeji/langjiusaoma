@@ -217,11 +217,19 @@
             var keys = data.keys;
             var id = data.id; // 获取产品ID
 
+            // 获取配置的链接基础URL（从PHP传递过来的rukou_url配置）
+            var linkBaseUrl = '{$linkBaseUrl}';
+            // 如果没有配置，使用当前域名
+            if (!linkBaseUrl || linkBaseUrl === '') {
+                linkBaseUrl = window.location.origin;
+            }
+            // 确保URL格式正确（去除末尾的斜杠）
+            linkBaseUrl = linkBaseUrl.replace(/\/+$/, '');
+
             // 构建完整链接，自动添加唯一的 nocache 参数避免浏览器历史记录规范化 URL 大小写
             // 使用时间戳+产品ID（纯数字）确保每个链接的唯一性
             var timestamp = Date.now();
-            var origin = window.location.origin;
-            var fullLink = origin + '/index?key=' + encodeURIComponent(keys) + '&nocache=' + timestamp + id;
+            var fullLink = linkBaseUrl + '/index?key=' + encodeURIComponent(keys) + '&nocache=' + timestamp + id;
 
             // 复制到剪贴板
             var tempInput = document.createElement('input');
