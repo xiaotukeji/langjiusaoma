@@ -481,7 +481,15 @@ class Company extends Adminbase
         $qrCode->setBackgroundColor(['r' => 255, 'g' => 255, 'b' => 255, 'a' => 0]);
         $qrCode->setValidateResult(false);
         
-        return new Response($qrCode->writeString(), 200, ['Content-Type' => $qrCode->getContentType()]);
+        // 设置响应头，支持图片显示和下载
+        $headers = [
+            'Content-Type' => $qrCode->getContentType(),
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0'
+        ];
+        
+        return new Response($qrCode->writeString(), 200, $headers);
     }
 
 }

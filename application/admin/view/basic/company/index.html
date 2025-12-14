@@ -257,30 +257,46 @@
         // 监听二维码按钮点击事件
         $(document).on('click', '.show-qrcode-btn', function() {
             var that = $(this);
-            var id = that.data('id');
+            // 从表格数据中获取产品ID，更可靠
+            var tr = that.closest('tr');
+            var data = layui.table.cache[init.table_render_id][tr.data('index')];
+            var id = data.id;
+            
+            if (!id) {
+                // 如果从表格数据获取不到，尝试从data属性获取
+                id = that.data('id');
+            }
             
             if (!id) {
                 layer.msg('产品ID不能为空', {icon: 2});
                 return false;
             }
             
-            // 构建二维码图片URL
+            // 构建二维码图片URL（使用相对路径，与其他操作保持一致）
             var qrcodeUrl = '{:url("qrcode")}?id=' + id;
             
             // 使用layer弹窗显示二维码
-            layer.open({
+            var contentHtml = '<div style="text-align:center; padding:20px;">' +
+                             '<img src="' + qrcodeUrl + '" style="max-width:100%; border:1px solid #ddd;" alt="二维码" onerror="this.onerror=null; this.src=\'\'; this.parentElement.innerHTML=\'<p style=\\\'color:red;\\\'>二维码加载失败，请检查权限或刷新重试</p>\';">' +
+                             '<div style="margin-top:15px;">' +
+                             '<button class="layui-btn layui-btn-sm" id="downloadQrBtn_' + id + '">下载二维码</button>' +
+                             '</div>' +
+                             '</div>';
+            
+            var layerIndex = layer.open({
                 type: 1,
-                title: '产品二维码',
-                area: ['400px', '500px'],
-                content: '<div style="text-align:center; padding:20px;">' +
-                         '<img src="' + qrcodeUrl + '" style="max-width:100%;" alt="二维码">' +
-                         '<div style="margin-top:15px;">' +
-                         '<button class="layui-btn layui-btn-sm" onclick="downloadQrcode(\'' + qrcodeUrl + '\', \'product_' + id + '.png\')">下载二维码</button>' +
-                         '</div>' +
-                         '</div>',
+                title: '产品二维码 - ID: ' + id,
+                area: ['450px', '550px'],
+                content: contentHtml,
                 btn: ['关闭'],
                 yes: function(index) {
                     layer.close(index);
+                },
+                success: function(layero, index) {
+                    // 绑定下载按钮事件
+                    $('#downloadQrBtn_' + id).on('click', function() {
+                        downloadQrcode(qrcodeUrl, 'product_' + id + '.png');
+                    });
                 }
             });
             
@@ -288,14 +304,30 @@
         });
         
         // 下载二维码函数
-        window.downloadQrcode = function(url, filename) {
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        };
+        function downloadQrcode(url, filename) {
+            // 使用fetch下载，避免跨域问题
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('下载失败');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    layer.msg('下载成功', {icon: 1});
+                })
+                .catch(error => {
+                    layer.msg('下载失败：' + error.message, {icon: 2});
+                });
+        }
     });
 </script>
 {/block}
