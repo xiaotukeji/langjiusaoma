@@ -10,6 +10,53 @@ class Index extends MemberBase
     
     public function index()
     {
+        // 域名跳转判断：如果来源域名是rukou_url，则跳转到luodi_url
+        $currentHost = $this->request->host(true); // 获取当前访问的域名（不包含协议和端口）
+        // 查询入口域名配置
+        $rukouUrl = Db::name('config')->where('name', 'rukou_url')->value('value');
+        if (!empty($rukouUrl)) {
+            // 去除协议，只比较域名部分
+            $rukouHost = parse_url($rukouUrl, PHP_URL_HOST);
+            if (empty($rukouHost)) {
+                // 如果没有协议，直接使用原值
+                $rukouHost = $rukouUrl;
+            }
+            // 比较当前域名是否匹配入口域名
+            if ($currentHost === $rukouHost) {
+                // 查询落地域名配置
+                $luodiUrl = Db::name('config')->where('name', 'luodi_url')->value('value');
+                if (!empty($luodiUrl)) {
+                    // 确保落地域名有协议
+                    if (!preg_match('/^https?:\/\//', $luodiUrl)) {
+                        $luodiUrl = 'https://' . $luodiUrl;
+                    }
+                    // 获取当前请求的路径和参数
+                    $pathinfo = $this->request->pathinfo();
+                    // 获取原始查询字符串，保留所有参数
+                    $queryString = '';
+                    if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
+                        $queryString = $_SERVER['QUERY_STRING'];
+                    } elseif (isset($_SERVER['REQUEST_URI'])) {
+                        $parsed = parse_url($_SERVER['REQUEST_URI']);
+                        if (isset($parsed['query']) && !empty($parsed['query'])) {
+                            $queryString = $parsed['query'];
+                        }
+                    }
+                    // 构建跳转URL
+                    $redirectUrl = rtrim($luodiUrl, '/');
+                    if (!empty($pathinfo)) {
+                        $redirectUrl .= '/' . ltrim($pathinfo, '/');
+                    }
+                    if (!empty($queryString)) {
+                        $redirectUrl .= '?' . $queryString;
+                    }
+                    // 执行跳转
+                    $this->redirect($redirectUrl, 302);
+                    return;
+                }
+            }
+        }
+        
         // 如果没有key参数，重定向到后台管理页面
         $key = '';
         // 从 REQUEST_URI 提取原始 key 值，保持大小写
