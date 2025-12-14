@@ -50,9 +50,70 @@ class Index extends MemberBase
                     if (!empty($queryString)) {
                         $redirectUrl .= '?' . $queryString;
                     }
-                    // 执行跳转
-                    $this->redirect($redirectUrl, 302);
-                    return;
+                    // 输出过渡页面，显示加载中，1秒后跳转
+                    $html = '<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在跳转...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+        .loading-container {
+            text-align: center;
+            padding: 40px;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .loading-tip {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">正在跳转中...</div>
+        <div class="loading-tip">请稍候</div>
+    </div>
+    <script>
+        setTimeout(function() {
+            window.location.href = "' . htmlspecialchars($redirectUrl, ENT_QUOTES, 'UTF-8') . '";
+        }, 1000);
+    </script>
+</body>
+</html>';
+                    echo $html;
+                    exit;
                 }
             }
         }
