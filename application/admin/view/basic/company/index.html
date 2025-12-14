@@ -27,7 +27,7 @@
             copy_url: '{:url("copy")}',
         };
 
-        // 定义一个函数来添加"插入空记录"按钮
+        // 定义一个函数来添加"插入空记录"按钮和"下载二维码"按钮
         function addEmptyRecordButton() {
             // 等待一小段时间确保工具栏已经渲染
             setTimeout(function() {
@@ -56,7 +56,182 @@
                         });
                     });
                 }
+                
+                // 检查下载二维码按钮是否已存在
+                if ($('.batch-download-qrcode-btn').length === 0) {
+                    // 找到插入空记录按钮
+                    var $emptyBtn = $('.empty-record-btn');
+                    
+                    // 添加一个批量下载二维码按钮
+                    var $downloadBtn = $('<button class="layui-btn layui-btn-normal layui-btn-sm batch-download-qrcode-btn" style="margin-left:5px;"><i class="layui-icon layui-icon-download-circle"></i>下载二维码</button>');
+                    
+                    // 在插入空记录按钮后面添加
+                    $emptyBtn.after($downloadBtn);
+                    
+                    // 绑定点击事件
+                    $downloadBtn.on('click', function() {
+                        showBatchDownloadDialog();
+                    });
+                }
             }, 100);
+        }
+        
+        // 显示批量下载对话框
+        function showBatchDownloadDialog() {
+            var contentHtml = '<div style="padding:20px;">' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">起始编号</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="number" id="startId" value="0" placeholder="请输入起始产品ID（0表示全部）" class="layui-input" min="0" step="1" oninput="this.value=this.value.replace(/[^0-9]/g,\'\')">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<label class="layui-form-label">结束编号</label>' +
+                            '<div class="layui-input-block">' +
+                            '<input type="number" id="endId" value="0" placeholder="请输入结束产品ID（0表示全部）" class="layui-input" min="0" step="1" oninput="this.value=this.value.replace(/[^0-9]/g,\'\')">' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="layui-form-item">' +
+                            '<div class="layui-input-block">' +
+                            '<p style="color:#999; font-size:12px;">提示：两个编号都为0时下载全部产品二维码；只能输入正整数</p>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+            
+            layer.open({
+                type: 1,
+                title: '批量下载二维码',
+                area: ['450px', '320px'],
+                content: contentHtml,
+                btn: ['开始下载', '取消'],
+                yes: function(index) {
+                    var startId = parseInt($('#startId').val()) || 0;
+                    var endId = parseInt($('#endId').val()) || 0;
+                    
+                    // 验证输入：确保是正整数或0
+                    if (isNaN(startId) || startId < 0 || startId % 1 !== 0) {
+                        layer.msg('起始编号必须是0或正整数', {icon: 2});
+                        return;
+                    }
+                    
+                    if (isNaN(endId) || endId < 0 || endId % 1 !== 0) {
+                        layer.msg('结束编号必须是0或正整数', {icon: 2});
+                        return;
+                    }
+                    
+                    // 验证逻辑：如果两个都大于0，起始编号不能大于结束编号
+                    if (startId > 0 && endId > 0 && startId > endId) {
+                        layer.msg('起始编号不能大于结束编号', {icon: 2});
+                        return;
+                    }
+                    
+                    // 开始批量下载
+                    batchDownloadQrcodes(startId, endId);
+                    layer.close(index);
+                },
+                btn2: function(index) {
+                    layer.close(index);
+                }
+            });
+        }
+        
+        // 批量下载二维码
+        function batchDownloadQrcodes(startId, endId) {
+            // 获取所有表格数据
+            var allData = layui.table.cache[init.table_render_id];
+            if (!allData || allData.length === 0) {
+                layer.msg('没有可下载的数据', {icon: 2});
+                return;
+            }
+            
+            // 筛选需要下载的产品
+            var downloadList = [];
+            if (startId === 0 && endId === 0) {
+                // 下载全部
+                downloadList = allData.filter(function(item) {
+                    return item.id && item.id > 0;
+                });
+            } else {
+                // 根据ID范围筛选（包含起始和结束编号）
+                downloadList = allData.filter(function(item) {
+                    var id = parseInt(item.id);
+                    if (!id || id <= 0) {
+                        return false; // 排除无效ID
+                    }
+                    if (startId === 0 && endId > 0) {
+                        // 只设置结束编号：下载ID <= endId的所有产品
+                        return id <= endId;
+                    } else if (startId > 0 && endId === 0) {
+                        // 只设置起始编号：下载ID >= startId的所有产品
+                        return id >= startId;
+                    } else if (startId > 0 && endId > 0) {
+                        // 两个都设置：下载ID在[startId, endId]范围内的产品（包含边界）
+                        return id >= startId && id <= endId;
+                    }
+                    return false;
+                });
+            }
+            
+            if (downloadList.length === 0) {
+                layer.msg('没有找到符合条件的产品', {icon: 2});
+                return;
+            }
+            
+            // 显示下载进度
+            var total = downloadList.length;
+            var current = 0;
+            var loadingIndex = layer.msg('准备下载 ' + total + ' 个二维码...', {icon: 16, time: 0});
+            
+            // 逐个下载（添加延迟避免浏览器阻止多个下载）
+            function downloadNext(index) {
+                if (index >= downloadList.length) {
+                    layer.close(loadingIndex);
+                    layer.msg('全部下载完成！共下载 ' + total + ' 个二维码', {icon: 1, time: 3000});
+                    return;
+                }
+                
+                var item = downloadList[index];
+                var qrcodeUrl = '{:url("qrcode")}?id=' + item.id;
+                var filename = 'product_' + item.id + '.png';
+                
+                // 更新进度
+                current++;
+                layer.msg('正在下载 ' + current + '/' + total + ' (' + item.id + ')...', {icon: 16, time: 0});
+                
+                // 下载文件
+                fetch(qrcodeUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('下载失败');
+                        }
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        var a = document.createElement('a');
+                        var url = window.URL.createObjectURL(blob);
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                        
+                        // 延迟后下载下一个（避免浏览器阻止）
+                        setTimeout(function() {
+                            downloadNext(index + 1);
+                        }, 500);
+                    })
+                    .catch(error => {
+                        console.error('下载失败:', item.id, error);
+                        // 继续下载下一个
+                        setTimeout(function() {
+                            downloadNext(index + 1);
+                        }, 500);
+                    });
+            }
+            
+            // 开始下载
+            downloadNext(0);
         }
 
         table.render({
