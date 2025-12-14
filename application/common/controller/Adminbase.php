@@ -89,7 +89,14 @@ class Adminbase extends Base
             }
             if (!$this->auth->isLogin()) {
                 Hook::listen('admin_nologin', $this);
-                $this->error('请先登录', url('admin/index/login'));
+                // 直接跳转到登录页面，不显示提示框
+                if ($this->request->isAjax()) {
+                    // AJAX请求返回JSON格式
+                    $this->error('请先登录', url('admin/index/login'));
+                } else {
+                    // 普通请求直接重定向
+                    $this->redirect(url('admin/index/login'));
+                }
             }
             define('UID', (int) $this->auth->id);
 
