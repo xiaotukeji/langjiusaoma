@@ -467,8 +467,7 @@ class Company extends Adminbase
         }
         
         // 构建完整链接（只包含key参数，nocache会在新页面自动添加）
-        $timestamp = time();
-        $fullLink = rtrim($linkBaseUrl, '/') . '/index?key=' . urlencode($row->keys) . '&nocache=' . $timestamp . $id;
+        $fullLink = rtrim($linkBaseUrl, '/') . '/index?key=' . urlencode($row->keys);
         
         // 生成二维码
         $qrCode = new QrCode($fullLink);

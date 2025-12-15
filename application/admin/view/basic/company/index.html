@@ -428,10 +428,8 @@
             // 确保URL格式正确（去除末尾的斜杠）
             linkBaseUrl = linkBaseUrl.replace(/\/+$/, '');
 
-            // 构建完整链接，自动添加唯一的 nocache 参数避免浏览器历史记录规范化 URL 大小写
-            // 使用时间戳+产品ID（纯数字）确保每个链接的唯一性
-            var timestamp = Date.now();
-            var fullLink = linkBaseUrl + '/index?key=' + encodeURIComponent(keys) + '&nocache=' + timestamp + id;
+            // 构建完整链接（只包含key参数，nocache会在新页面自动添加）
+            var fullLink = linkBaseUrl + '/index?key=' + encodeURIComponent(keys);
 
             // 复制到剪贴板
             var tempInput = document.createElement('input');
